@@ -9,6 +9,10 @@ class Alumno {
         this.nota3 = nota3;
     }
 
+    sumaNotas() {
+        return (this.nota1 + this.nota2 + this.nota3) / 3;
+    }
+
 }
 //funciones
 
@@ -18,7 +22,7 @@ function crearAlumno() {
     let nombre = prompt("ingrese su nombre");
     let apellido = prompt("Ingrese su apellido");
 
-    while (isNaN(nombre) === false || isNaN(apellido) === false) {
+    while (!isNaN(nombre) || !isNaN(apellido)) {
         alert("ingrese un nombre y apellido valido")
         nombre = prompt("ingrese su nombre");
         apellido = prompt("Ingrese su apellido");
@@ -45,7 +49,40 @@ function crearAlumno() {
     // agregar alumno al array
     alumnos.push(nuevoAlumno);
 
-    console.log(alumnos);
+}
+
+function obtenerNombreAlumno() {
+    let nombreAlumno = prompt("ingrese el nombre del alumno para modificar sus notas");
+
+    let alumnoEncontrado = alumnos.find((el) => {
+        return el.nombre.toLowerCase() === nombreAlumno.toLowerCase();
+    }
+    )
+
+    while(alumnoEncontrado === undefined) {
+        alert("Alumno no encontrado");
+        nombreAlumno = prompt("ingrese el nombre del alumno para modificar sus notas");
+        alumnoEncontrado = alumnos.find((el) => {
+            return el.nombre.toLowerCase() === nombreAlumno.toLowerCase();
+        }
+        )
+    }
+    return alumnoEncontrado;
+}
+
+//cambiar notas alumno
+function cambiarNotas() {
+    const alumnoEncontrado = obtenerNombreAlumno();
+
+    const nuevaNota1 = parseFloat(prompt("Ingrese nueva nota 1"));
+    const nuevaNota2 = parseFloat(prompt("Ingrese nueva nota 2"));
+    const nuevaNota3 = parseFloat(prompt("Ingrese nueva nota 3"));
+
+    alumnoEncontrado.nota1 = nuevaNota1;
+    alumnoEncontrado.nota2 = nuevaNota2;
+    alumnoEncontrado.nota3 = nuevaNota3;
+
+    alert("Notas modificadas");
 }
 //verificar si la opcion ingresada es valida
 function opcionValida(opcionIngresada) {
@@ -61,13 +98,26 @@ function opcionValida(opcionIngresada) {
 
     return true;
 }
-const calcularPromedio = (nota1, nota2, nota3) => (nota1 + nota2 + nota3) / 3
+
+// sacar promedio del alumno
+function notaFinal() {
+    const total = alumnos.reduce((acc, el) => {
+        return acc + el.sumaNotas();
+    }, 0);
+    
+    if (total >= 6) {
+    alert("Su promedio es " + " " + total.toFixed(2) + " " + " y esta aprobado!")
+    }
+    else if(total <=5) {
+        alert("su promedio es" + total.toFixed(2) + " y no aprobo :(")
+    }
+}
 
 
 //inicio del programa
 const alumnos = []
 
-const opciones = "1- Ingresar Alumno, 2- Cambiar Datos, 3- Calcular Nota Final, 0- Salir";
+const opciones = "1- Ingresar Alumno, 2- Calcular Nota Final, 3- Cambiar Nota, 0- Salir";
 let opcion = parseInt(prompt(opciones));
 
 while(opcionValida(opcion)) {
@@ -76,12 +126,18 @@ while(opcionValida(opcion)) {
         case 1:
             crearAlumno();
             break;
+
         case 2:
+            notaFinal();
         break;
 
         case 3:
+            cambiarNotas();
         break;
     }
 
     opcion = parseInt(prompt(opciones));
 }
+
+
+console.log(alumnos);
