@@ -48,6 +48,7 @@ function crearAlumno() {
 
     // agregar alumno al array
     alumnos.push(nuevoAlumno);
+    renderizarTablaAlumnos();
 
 }
 
@@ -83,6 +84,9 @@ function cambiarNotas() {
     alumnoEncontrado.nota3 = nuevaNota3;
 
     alert("Notas modificadas");
+
+    renderizarTablaAlumnos();
+
 }
 //verificar si la opcion ingresada es valida
 function opcionValida(opcionIngresada) {
@@ -113,12 +117,38 @@ function notaFinal() {
     }
 }
 
+// RENDERIZAR TABLA DE ALUMNOS
+
+function renderizarTablaAlumnos() {
+
+    tbodyAlumnos.innerHTML = "";
+
+    for ( const alumno of alumnos) {
+        tbodyAlumnos.innerHTML = tbodyAlumnos.innerHTML + 
+        `
+        <tr>
+            <td>${alumno.nombre}</td>
+            <td>${alumno.apellido}</td>
+            <td>${alumno.nota1}</td>
+            <td>${alumno.nota2}</td>
+            <td>${alumno.nota3}</td>   
+        </tr>
+        `;
+    }
+}
+
 
 //inicio del programa
-const alumnos = []
+const tbodyAlumnos = document.getElementById("tbody-alumnos");
+const alumnos = [
+    new Alumno("Juan", "Pérez", 7, 8, 9),
+]
+
+renderizarTablaAlumnos();
 
 const opciones = "1- Ingresar Alumno, 2- Calcular Nota Final, 3- Cambiar Nota, 0- Salir";
 let opcion = parseInt(prompt(opciones));
+
 
 while(opcionValida(opcion)) {
     
@@ -141,3 +171,4 @@ while(opcionValida(opcion)) {
 
 
 console.log(alumnos);
+
