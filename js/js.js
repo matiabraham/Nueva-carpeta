@@ -10,27 +10,63 @@ class Alumno {
     }
 
     sumaNotas() {
-        return (this.nota1 + this.nota2 + this.nota3) / 3;
-    }
+        return (parseFloat(this.nota1) + parseFloat(this.nota2) + parseFloat(this.nota3)) / 3;
+    }    
 
 }
 //funciones
 
+//ver si el alumno  ya esta cargado
+function alumnoExiste(nombre, apellido) {
+    return alumnos.some(alumno => 
+        alumno.nombre.toLowerCase() === nombre.toLowerCase() && 
+        alumno.apellido.toLowerCase() === apellido.toLowerCase()
+    );
+} 
+
+
 // pedir nombre, apellido y notas del alumno
-function crearAlumno() {
+function crearAlumno(e) {
+    e.preventDefault();
+    // Inputs
+    const inputNombreAlumno = document.getElementById("nombre-alumno");
+    const inputApellidoAlumno = document.getElementById("apellido-alumno");
+    const inputNota1 = document.getElementById("nota1");
+    const inputNota2 = document.getElementById("nota2");
+    const inputNota3 = document.getElementById("nota3");
 
-    let nombre = prompt("ingrese su nombre");
-    let apellido = prompt("Ingrese su apellido");
+    let nombre = inputNombreAlumno.value;
+    let apellido = inputApellidoAlumno.value;
 
-    while (!isNaN(nombre) || !isNaN(apellido)) {
-        alert("ingrese un nombre y apellido valido")
-        nombre = prompt("ingrese su nombre");
-        apellido = prompt("Ingrese su apellido");
+    //validar nombre y apellido
+    if (!nombre || !apellido || !isNaN(nombre) || !isNaN(apellido)) {
+        alert("Ingrese Nombre y Apellido valido");
+        return;
     }
-    const nota1 = parseFloat(prompt("ingrese su nota 1"));
-    const nota2 = parseFloat(prompt("ingrese su nota 2"));
-    const nota3 = parseFloat(prompt("ingrese su nota 3"));
 
+    //chequear si el alumno ya esta cargado
+    if (alumnoExiste(nombre, apellido)) {
+        alert("El alumno ya está cargado");
+        return;
+    }
+
+    const nota1 = parseFloat(inputNota1.value);
+    const nota2 = parseFloat(inputNota2.value);
+    const nota3 = parseFloat(inputNota3.value);
+
+    //limpiar inputs
+    inputNombreAlumno.value = "";
+    inputApellidoAlumno.value = "";
+    inputNota1.value = "";
+    inputNota2.value = "";
+    inputNota3.value = "";
+    
+
+    //chequear que las notas sean numeros validos
+    if (isNaN(nota1) || isNaN(nota2) || isNaN(nota3)) {
+        alert("Por favor, ingrese notas válidas");
+        return;
+    }
     
 
     
@@ -52,71 +88,6 @@ function crearAlumno() {
 
 }
 
-function obtenerNombreAlumno() {
-    let nombreAlumno = prompt("ingrese el nombre del alumno para modificar sus notas");
-
-    let alumnoEncontrado = alumnos.find((el) => {
-        return el.nombre.toLowerCase() === nombreAlumno.toLowerCase();
-    }
-    )
-
-    while(alumnoEncontrado === undefined) {
-        alert("Alumno no encontrado");
-        nombreAlumno = prompt("ingrese el nombre del alumno para modificar sus notas");
-        alumnoEncontrado = alumnos.find((el) => {
-            return el.nombre.toLowerCase() === nombreAlumno.toLowerCase();
-        }
-        )
-    }
-    return alumnoEncontrado;
-}
-
-//cambiar notas alumno
-function cambiarNotas() {
-    const alumnoEncontrado = obtenerNombreAlumno();
-
-    const nuevaNota1 = parseFloat(prompt("Ingrese nueva nota 1"));
-    const nuevaNota2 = parseFloat(prompt("Ingrese nueva nota 2"));
-    const nuevaNota3 = parseFloat(prompt("Ingrese nueva nota 3"));
-
-    alumnoEncontrado.nota1 = nuevaNota1;
-    alumnoEncontrado.nota2 = nuevaNota2;
-    alumnoEncontrado.nota3 = nuevaNota3;
-
-    alert("Notas modificadas");
-
-    renderizarTablaAlumnos();
-
-}
-//verificar si la opcion ingresada es valida
-function opcionValida(opcionIngresada) {
-    while(opcionIngresada < 0 || opcionIngresada > 4) {
-        alert("OPCION INVALIDA")
-        opcionIngresada = parseInt(prompt(opciones));
-    }
-
-    if(opcionIngresada=== 0) {
-        alert("SALIR");
-        return false;
-    }
-
-    return true;
-}
-
-// sacar promedio del alumno
-function notaFinal() {
-    const total = alumnos.reduce((acc, el) => {
-        return acc + el.sumaNotas();
-    }, 0);
-    
-    if (total >= 6) {
-    alert("Su promedio es " + " " + total.toFixed(2) + " " + " y esta aprobado!")
-    }
-    else if(total <=5) {
-        alert("su promedio es" + total.toFixed(2) + " y no aprobo :(")
-    }
-}
-
 // RENDERIZAR TABLA DE ALUMNOS
 
 function renderizarTablaAlumnos() {
@@ -124,51 +95,109 @@ function renderizarTablaAlumnos() {
     tbodyAlumnos.innerHTML = "";
 
     for ( const alumno of alumnos) {
-        tbodyAlumnos.innerHTML = tbodyAlumnos.innerHTML + 
-        `
-        <tr>
-            <td>${alumno.nombre}</td>
-            <td>${alumno.apellido}</td>
-            <td>${alumno.nota1}</td>
-            <td>${alumno.nota2}</td>
-            <td>${alumno.nota3}</td>   
-        </tr>
-        `;
+
+        const tr = document.createElement("tr");
+        const tdNombre = document.createElement("td");
+        const tdApellido = document.createElement("td");
+        const tdNota1 = document.createElement("td");
+        const tdNota2 = document.createElement("td");
+        const tdNota3 = document.createElement("td");
+
+        //calcular si el alumno aprobo o desaprobo
+        const promedio = alumno.sumaNotas();
+        let estado;
+            if (promedio >= 6) {
+        estado = "Aprobado";
+} else {
+        estado = "Desaprobado";
+}
+        const tdPromedio = document.createElement("td");
+        const tdEstado = document.createElement("td");
+
+        tdNombre.innerText = `${alumno.nombre}`;
+        tdApellido.innerText = `${alumno.apellido}`;
+        tdNota1.innerText = "";
+        tdNota2.innerText = "";
+        tdNota3.innerText = "";
+        tdPromedio.innerText = `${promedio.toFixed(2)}`;
+        tdEstado.innerText = `${estado}`;
+
+
+
+
+        const spanNota1 = document.createElement("span");
+        spanNota1.innerText = `${alumno.nota1}`;
+        spanNota1.addEventListener("click", () => {
+            //cambiar nota 1
+            const inputNota1 = document.createElement("input");
+            inputNota1.type = "text";
+            inputNota1.value = alumno.nota1;
+            
+            inputNota1.addEventListener("change", () => {
+                alumno.nota1 = inputNota1.value;
+                renderizarTablaAlumnos();
+            })
+            // agregar input al td
+            tdNota1.append(inputNota1);
+
+            //ocultar span
+            spanNota1.classList.add("ocultar-span");
+        })
+
+
+        const spanNota2 = document.createElement("span");
+        spanNota2.innerText = `${alumno.nota2}`;
+        spanNota2.addEventListener("click", () => {
+            //cambiar nota 2
+            const inputNota2 = document.createElement("input");
+            inputNota2.type = "text";
+            inputNota2.value = alumno.nota2;
+            
+            inputNota2.addEventListener("change", () => {
+                alumno.nota2 = inputNota2.value;
+                renderizarTablaAlumnos();
+            })
+            // agregar input al td
+            tdNota2.append(inputNota2);
+
+            //ocultar span
+            spanNota2.classList.add("ocultar-span");
+        })
+        const spanNota3 = document.createElement("span");
+        spanNota3.innerText = `${alumno.nota3}`;
+        spanNota3.addEventListener("click", () => {
+            //cambiar nota 3
+            const inputNota3 = document.createElement("input");
+            inputNota3.type = "text";
+            inputNota3.value = alumno.nota3;
+            
+            inputNota3.addEventListener("change", () => {
+                alumno.nota3 = inputNota3.value;
+                renderizarTablaAlumnos();
+            })
+            // agregar input al td
+            tdNota3.append(inputNota3);
+
+            //ocultar span
+            spanNota3.classList.add("ocultar-span");
+            
+        })
+        tdNota1.append(spanNota1);
+        tdNota2.append(spanNota2);
+        tdNota3.append(spanNota3);
+        tr.append(tdNombre,tdApellido,tdNota1,tdNota2,tdNota3,tdPromedio,tdEstado,);
+        tbodyAlumnos.append(tr);
     }
 }
 
-
 //inicio del programa
+const formAgregarAlumno = document.getElementById("form-agregar-alumno");
 const tbodyAlumnos = document.getElementById("tbody-alumnos");
 const alumnos = [
-    new Alumno("Juan", "Pérez", 7, 8, 9),
+    //alumno de prueba
+    new Alumno("matias", "abraham", 7, 8, 9),
 ]
 
 renderizarTablaAlumnos();
 
-const opciones = "1- Ingresar Alumno, 2- Calcular Nota Final, 3- Cambiar Nota, 0- Salir";
-let opcion = parseInt(prompt(opciones));
-
-
-while(opcionValida(opcion)) {
-    
-    switch(opcion) {
-        case 1:
-            crearAlumno();
-            break;
-
-        case 2:
-            notaFinal();
-        break;
-
-        case 3:
-            cambiarNotas();
-        break;
-    }
-
-    opcion = parseInt(prompt(opciones));
-}
-
-
-console.log(alumnos);
-
+formAgregarAlumno.addEventListener("submit", crearAlumno);

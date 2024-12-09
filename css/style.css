@@ -3,3 +3,23 @@ table, th, td {
     padding: 10px;
 }
 
+
+
+#form-agregar-alumno {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    align-self: center;
+}
+
+#boton-cargar-alumno {
+    margin-top: 5px;
+}
+
+.ocultar-span {
+    display:none
+}
+html {
+    background-color: rgb(158, 158, 158);
+}

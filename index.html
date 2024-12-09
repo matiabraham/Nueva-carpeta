@@ -9,22 +9,32 @@
 <body>
     <h1>Calcular Promedio Notas</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>NOMBRE</th>
-                <th>APELLIDO</th>
-                <th>NOTA 1</th>
-                <th>NOTA 2</th>
-                <th>NOTA 3 </th>
-                <th>ESTADO</th>
-            </tr>
-        </thead>
-        <tbody id="tbody-alumnos">
-            
-        </tbody>
-    </table>
-
+    <div id="contenedor-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>APELLIDO</th>
+                    <th>NOTA 1</th>
+                    <th>NOTA 2</th>
+                    <th>NOTA 3 </th>
+                    <th>Promedio</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-alumnos">
+                
+            </tbody>
+        </table>
+    </div>
+    <form id="form-agregar-alumno">
+        <input type="text" id="nombre-alumno" placeholder="Nombre">
+        <input type="text" id="apellido-alumno" placeholder="Apellido">
+        <input type="text" id="nota1" placeholder="nota1">
+        <input type="text" id="nota2" placeholder="nota2">
+        <input type="text" id="nota3" placeholder="nota3">
+        <button type="submit" id="boton-cargar-alumno">Cargar alumno</button>
+    </form>
 
     <script src="js/js.js"></script>
 </body>
