@@ -16,7 +16,27 @@ class Alumno {
 }
 //funciones
 
-//ver si el alumno  ya esta cargado
+function obtenerDeLS() {
+    const alumnosJSON = localStorage.getItem("alumnos");
+
+    if (alumnosJSON === null) {
+        return [
+            // Alumno de prueba
+            new Alumno("matias", "abraham", 7, 8, 9),
+        ];
+    } else {
+        const alumnosData = JSON.parse(alumnosJSON);
+        return alumnosData.map(data => new Alumno(data.nombre, data.apellido, data.nota1, data.nota2, data.nota3));
+    }
+}
+
+
+function guardarEnLS() {
+    const alumnosJSON = JSON.stringify(alumnos);
+
+    localStorage.setItem("alumnos", alumnosJSON);
+}
+//ver si el alumno ya esta cargado
 function alumnoExiste(nombre, apellido) {
     return alumnos.some(alumno => 
         alumno.nombre.toLowerCase() === nombre.toLowerCase() && 
@@ -84,8 +104,21 @@ function crearAlumno(e) {
 
     // agregar alumno al array
     alumnos.push(nuevoAlumno);
+
+    //GUARDAR EN LS
+    guardarEnLS();
+
     renderizarTablaAlumnos();
 
+}
+
+//  ELIMINAR ALUMNO 
+function eliminarAlumno(indice) {
+    alumnos.splice(indice, 1);
+    renderizarTablaAlumnos(); 
+
+    //GUARDAR EN LS
+    guardarEnLS();
 }
 
 // RENDERIZAR TABLA DE ALUMNOS
@@ -94,7 +127,7 @@ function renderizarTablaAlumnos() {
 
     tbodyAlumnos.innerHTML = "";
 
-    for ( const alumno of alumnos) {
+    for ( const [indice, alumno] of alumnos.entries()) {
 
         const tr = document.createElement("tr");
         const tdNombre = document.createElement("td");
@@ -113,6 +146,7 @@ function renderizarTablaAlumnos() {
 }
         const tdPromedio = document.createElement("td");
         const tdEstado = document.createElement("td");
+        const tdBotonEliminar = document.createElement("td"); // Celda para el botón de eliminar
 
         tdNombre.innerText = `${alumno.nombre}`;
         tdApellido.innerText = `${alumno.apellido}`;
@@ -122,8 +156,12 @@ function renderizarTablaAlumnos() {
         tdPromedio.innerText = `${promedio.toFixed(2)}`;
         tdEstado.innerText = `${estado}`;
 
+        // Crear botón de eliminar
+        const botonEliminar = document.createElement("button");
+        botonEliminar.innerText = "Eliminar";
+        botonEliminar.addEventListener("click", () => eliminarAlumno(indice));
 
-
+        tdBotonEliminar.appendChild(botonEliminar);
 
         const spanNota1 = document.createElement("span");
         spanNota1.innerText = `${alumno.nota1}`;
@@ -131,12 +169,16 @@ function renderizarTablaAlumnos() {
             //cambiar nota 1
             const inputNota1 = document.createElement("input");
             inputNota1.type = "text";
-            inputNota1.value = alumno.nota1;
+            inputNota1.value = parseFloat(alumno.nota1);
             
             inputNota1.addEventListener("change", () => {
-                alumno.nota1 = inputNota1.value;
+                alumno.nota1 = parseFloat(inputNota1.value);
                 renderizarTablaAlumnos();
+
+                //GUARDAR EN LS
+                guardarEnLS();
             })
+
             // agregar input al td
             tdNota1.append(inputNota1);
 
@@ -154,8 +196,11 @@ function renderizarTablaAlumnos() {
             inputNota2.value = alumno.nota2;
             
             inputNota2.addEventListener("change", () => {
-                alumno.nota2 = inputNota2.value;
+                alumno.nota2 = parseFloat(inputNota2.value);
                 renderizarTablaAlumnos();
+
+                //GUARDAR EN LS
+                guardarEnLS();
             })
             // agregar input al td
             tdNota2.append(inputNota2);
@@ -172,8 +217,11 @@ function renderizarTablaAlumnos() {
             inputNota3.value = alumno.nota3;
             
             inputNota3.addEventListener("change", () => {
-                alumno.nota3 = inputNota3.value;
+                alumno.nota3 = parseFloat(inputNota3.value);
                 renderizarTablaAlumnos();
+
+                //GUARDAR EN LS
+                guardarEnLS();
             })
             // agregar input al td
             tdNota3.append(inputNota3);
@@ -185,18 +233,36 @@ function renderizarTablaAlumnos() {
         tdNota1.append(spanNota1);
         tdNota2.append(spanNota2);
         tdNota3.append(spanNota3);
-        tr.append(tdNombre,tdApellido,tdNota1,tdNota2,tdNota3,tdPromedio,tdEstado,);
+        tr.append(tdNombre,tdApellido,tdNota1,tdNota2,tdNota3,tdPromedio,tdEstado, tdBotonEliminar);
         tbodyAlumnos.append(tr);
     }
 }
 
+
+//filtrar alumnos por nombre
+
+const inputFiltrarNombre = document.getElementById("filtrar-nombre");
+
+inputFiltrarNombre.addEventListener("input", function () {
+    const textoFiltro = inputFiltrarNombre.value.toLowerCase();
+    const filas = tbodyAlumnos.getElementsByTagName("tr");
+
+    for (const fila of filas) {
+        const nombreCelda = fila.cells[0].textContent.toLowerCase();
+        if (nombreCelda.includes(textoFiltro)) {
+            fila.style.display = ""; 
+        } else {
+            fila.style.display = "none"; 
+        }
+    }
+});
+
+
+
 //inicio del programa
 const formAgregarAlumno = document.getElementById("form-agregar-alumno");
 const tbodyAlumnos = document.getElementById("tbody-alumnos");
-const alumnos = [
-    //alumno de prueba
-    new Alumno("matias", "abraham", 7, 8, 9),
-]
+let alumnos = obtenerDeLS();
 
 renderizarTablaAlumnos();
 

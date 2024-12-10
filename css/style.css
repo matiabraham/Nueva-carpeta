@@ -3,7 +3,9 @@ table, th, td {
     padding: 10px;
 }
 
-
+#filtrar-nombre {
+    margin-bottom: 2px;
+}
 
 #form-agregar-alumno {
     margin-top: 10px;
