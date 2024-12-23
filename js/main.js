@@ -18,17 +18,11 @@ class Alumno {
 
 function obtenerDeLS() {
     const alumnosJSON = localStorage.getItem("alumnos");
-
-    if (alumnosJSON === null) {
-        return [
-            // Alumno de prueba
-            new Alumno("matias", "abraham", 7, 8, 9),
-        ];
-    } else {
-        const alumnosData = JSON.parse(alumnosJSON);
-        return alumnosData.map(data => new Alumno(data.nombre, data.apellido, data.nota1, data.nota2, data.nota3));
-    }
+    return (JSON.parse(alumnosJSON) ?? [
+        new Alumno("matias", "abraham", 7, 8, 9) // Alumno de prueba
+    ]).map(data => new Alumno(data.nombre, data.apellido, data.nota1, data.nota2, data.nota3));
 }
+
 
 
 function guardarEnLS() {
@@ -138,15 +132,11 @@ function renderizarTablaAlumnos() {
 
         //calcular si el alumno aprobo o desaprobo
         const promedio = alumno.sumaNotas();
-        let estado;
-            if (promedio >= 6) {
-        estado = "Aprobado";
-} else {
-        estado = "Desaprobado";
-}
+        let estado = promedio >= 6 ? "Aprobado" : "Desaprobado";
+
         const tdPromedio = document.createElement("td");
         const tdEstado = document.createElement("td");
-        const tdBotonEliminar = document.createElement("td"); // Celda para el botón de eliminar
+        const tdBotonEliminar = document.createElement("td");
 
         tdNombre.innerText = `${alumno.nombre}`;
         tdApellido.innerText = `${alumno.apellido}`;
@@ -159,9 +149,13 @@ function renderizarTablaAlumnos() {
         // Crear botón de eliminar
         const botonEliminar = document.createElement("button");
         botonEliminar.innerText = "Eliminar";
+        // Agregar una clase al botón
+        botonEliminar.classList.add("boton-eliminar");
         botonEliminar.addEventListener("click", () => eliminarAlumno(indice));
 
         tdBotonEliminar.appendChild(botonEliminar);
+
+
 
         const spanNota1 = document.createElement("span");
         spanNota1.innerText = `${alumno.nota1}`;
